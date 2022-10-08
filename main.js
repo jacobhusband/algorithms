@@ -1,46 +1,17 @@
-function solution(n, k) {
-  var strNum = convertToBits(n);
-  var newStr = replaceLetter(strNum, strNum.length - k, "0");
-  return convertToNum(newStr);
-}
-
-function replaceLetter(str, ind, char) {
-  var output = "";
-  for (var i = 0; i < str.length; i++) {
-    if (i === ind) {
-      output += char;
-    } else {
-      output += str[i];
+function solution(lastNumberOfDays) {
+  // make an array of the length of all months
+  // find the location of all the months with lastNumberOfDays and save the next month in an object
+  // retrieve the keys from the object and store them in an array and return it
+  var months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  var storage = {};
+  for (var i = 0; i < 12; i++) {
+    if (lastNumberOfDays === months[i]) {
+      if (i !== 11) {
+        storage[months[i + 1]] = 1;
+      } else {
+        storage[months[0]] = 1;
+      }
     }
   }
-  return output;
-}
-
-function convertToBits(n) {
-  var output = "";
-  var num = 2 ** 30;
-  var firstOne = false;
-  while (num !== 0) {
-    if (n / num >= 1) {
-      firstOne = true;
-      output += 1;
-      n = n % num;
-    } else if (firstOne) {
-      output += 0;
-    }
-    num = Math.floor(num / 2);
-  }
-  return output;
-}
-
-function convertToNum(b) {
-  var output = 0;
-  var startNum = 2 ** b.length;
-  for (var i = 0; i < b.length; i++) {
-    startNum = startNum / 2;
-    if (b[i] === "1") {
-      output += startNum;
-    }
-  }
-  return output;
+  return Object.keys(storage).map((x) => parseInt(x));
 }
