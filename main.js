@@ -1,3 +1,4 @@
+
 function solution(a) {
   // make each dec to bin
   // reverse the array and join
@@ -10,3 +11,4 @@ function solution(a) {
     2
   );
 }
+
