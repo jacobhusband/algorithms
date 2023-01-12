@@ -1,5 +1,6 @@
 function convertQueryToMap(query) {
-  let tempArr, tempObj, tempObjUpper, tempObjLower;
+  if (!query.length) return {};
+  let tempArr, tempArr2, tempNames, prop, assigner;
   let result = {};
   const arr = query
     .split("&")
@@ -7,26 +8,32 @@ function convertQueryToMap(query) {
       tempArr = str.split("=");
       tempArr[0] = tempArr[0].split(".");
       tempArr[1] = tempArr[1].split("%20").join(" ");
+      tempArr[1] = tempArr[1].split("%26").join("&");
+      tempArr[1] = tempArr[1].split("%3D").join("=");
+      tempArr[1] = tempArr[1].split("%3F").join("?");
       return tempArr;
     })
     .sort((a, b) => a[0].length - b[0].length);
-  tempObjUpper = result;
+  tempArr = new Array(arr.length).fill(result);
   for (let i = 0; i < arr[arr.length - 1][0].length; i++) {
+    tempNames = [];
+    tempArr2 = [];
     for (let j = 0; j < arr.length; j++) {
-      if (!i) tempObjUpper[arr[j][0][i]] = {};
-      if (i && arr[j][0][i] !== undefined) {
-        tempObjLower = tempObjUpper[arr[j][0][i - 1]];
-        i === arr[j][0].length - 1
-          ? (tempObjLower[arr[j][0][i]] = arr[j][1])
-          : (tempObjLower[arr[j][0][i]] = {});
+      prop = arr[j][0][i];
+      assigner = tempArr[j];
+      tempNames.push(prop);
+      if (prop !== undefined) {
+        if (i === arr[j][0].length - 1) assigner[prop] = arr[j][1];
+        else assigner[prop] = {};
       }
-      if (j === arr.length - 1 && i)
-        tempObjUpper = tempObjUpper[arr[j][0][i - 1]];
     }
+    for (let k = 0; k < arr.length; k++)
+      tempArr2.push(tempArr[k][tempNames[k]]);
+    tempArr = tempArr2;
   }
   return result;
 }
 
 convertQueryToMap(
-  "user.name.firstname=Bob&user.name.lastname=Smith&user.favoritecolor=Light%20Blue"
+  "user.1.name=Alice&user.2.name=Bob&user.3.name=Charles&user.4.name=Debbie"
 );
